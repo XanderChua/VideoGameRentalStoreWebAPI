@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using VideoGameRental.Common.DTO;
@@ -39,7 +38,6 @@ namespace VideoGameRentalStore.ViewModel
                 throw new Exception(responseBody.Result);
             }
         }
-
         public bool ValidateUser(string inputID, string password)
         {
             Task<string> responseBody;
@@ -162,6 +160,22 @@ namespace VideoGameRentalStore.ViewModel
                 throw new Exception(responseBody.Result);
             }
         }
+        public ICollection<GamesDTO> RentedGames(string id)
+        {
+            Task<string> responseBody;
+            var response = _httpClient.GetAsync($"{baselink}/StoreManager/GamesRented?id=" + id);
+            if (response.Result.IsSuccessStatusCode)
+            {
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                responseBody.Wait();
+                return JsonConvert.DeserializeObject<ICollection<GamesDTO>>(responseBody.Result);
+            }
+            else
+            {
+                responseBody = response.Result.Content.ReadAsStringAsync();
+                throw new Exception(responseBody.Result);
+            }
+        }
         public ICollection<GamesDTO> OverduedGames(DateTime dateTime)
         {
             Task<string> responseBody;
@@ -217,16 +231,16 @@ namespace VideoGameRentalStore.ViewModel
             }
         }
         //GamesAvailable()
-        public ICollection<GamesDTO> SearchUser(string searchUserByGames)
+        public ICollection<UserDTO> SearchUser(string searchUserByGames)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchUsers");
+            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchUsers?gameid="+searchUserByGames);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
-                return JsonConvert.DeserializeObject<ICollection<GamesDTO>>(responseBody.Result);
+                return JsonConvert.DeserializeObject<ICollection<UserDTO>>(responseBody.Result);
             }
             else
             {
@@ -237,7 +251,7 @@ namespace VideoGameRentalStore.ViewModel
         public ICollection<GamesDTO> SearchGame(string searchGamesByUser)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchGames");
+            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchGames?userid=" +searchGamesByUser);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
@@ -253,14 +267,15 @@ namespace VideoGameRentalStore.ViewModel
         }
 
         //User
-        public GamesDTO Rent(string id, DateTime dateTime, string selectGameRent)
+        public GamesDTO Rent(string id, string selectGameRent)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/UserManager/Rent");
+            var method = new HttpMethod("PATCH");
+            HttpRequestMessage request = new HttpRequestMessage(method, $"{baselink}/UserManager/Rent?gameID="+ selectGameRent + "&userid="+id);
+            var response = _httpClient.SendAsync(request);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Rent success!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<GamesDTO>(responseBody.Result);
@@ -271,34 +286,18 @@ namespace VideoGameRentalStore.ViewModel
                 throw new Exception(responseBody.Result);
             }
         }
-        public GamesDTO Return(string id, DateTime dateTime, string selectGameRent)
+        public GamesDTO Return(string selectGameRent)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/UserManager/Return");
+            var method = new HttpMethod("PATCH");
+            HttpRequestMessage request = new HttpRequestMessage(method, $"{baselink}/UserManager/Return?gameID=" + selectGameRent);
+            var response = _httpClient.SendAsync(request);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Return success!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<GamesDTO>(responseBody.Result);
-            }
-            else
-            {
-                responseBody = response.Result.Content.ReadAsStringAsync();
-                throw new Exception(responseBody.Result);
-            }
-        }
-        public ICollection<GamesDTO> ListRentedGames(string id)
-        {
-            Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/UserManager/RentedGames");
-            response.Wait();
-            if (response.Result.IsSuccessStatusCode)
-            {
-                responseBody = response.Result.Content.ReadAsStringAsync();
-                responseBody.Wait();
-                return JsonConvert.DeserializeObject<ICollection<GamesDTO>>(responseBody.Result);
             }
             else
             {

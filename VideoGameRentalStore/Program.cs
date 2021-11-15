@@ -249,15 +249,20 @@ namespace VideoGameRentalStore
                     }
                     else if (inputStoreStaffOption == 2)
                     {
-                        vm.GamesAvailable();
+                        foreach (var gameNotRented in vm.GamesAvailable())
+                        {
+                            Console.WriteLine("Game ID: " + gameNotRented.gamesID + " Game Name: " + gameNotRented.gamesName +
+                                "\nGame Rent Price: " + gameNotRented.gameRentPrice);
+                        }
+                        Console.WriteLine("\n");
                     }
                     else if (inputStoreStaffOption == 3)
                     {
                         Console.WriteLine("Enter Game ID:");
                         string searchUserByGames = Console.ReadLine();
-                        foreach (var game in vm.SearchUser(searchUserByGames))
+                        foreach (var user in vm.SearchUser(searchUserByGames))
                         {
-                            Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName);                           
+                            Console.WriteLine("User ID: " + user.userID + "\nUser Name: " + user.userName);                           
                         }                     
                     }
                     else if (inputStoreStaffOption == 4)
@@ -311,40 +316,31 @@ namespace VideoGameRentalStore
                     if (inputStoreUser == 1)
                     {
                         Console.WriteLine("Enter game ID to rent:");
-                        ICollection<GamesDTO> gameCollection= vm.GamesAvailable();
-                        foreach (var game in gameCollection)
+                        foreach (var game in vm.GamesAvailable())
                         {
-                            if (game.rentedStatus == "Not Rented")
-                            {
-                                Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName + " Price: " + game.gameRentPrice);
-                            }
+                            Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName + " Price: " + game.gameRentPrice);
                         }
                         string selectGameRent = Console.ReadLine();
-                        vm.Rent(id, dateTime, selectGameRent);
+                        if(vm.Rent(id, selectGameRent)!=null)
+                            Console.WriteLine("Rent success!");
                     }
                     else if (inputStoreUser == 2)
                     {
                         Console.WriteLine("Enter game ID to return:");
-                        ICollection<GamesDTO> gameCollection = vm.RentedGames();
-                        foreach (var rentedgame in gameCollection)
+                        foreach (var rentedgame in vm.RentedGames(id))
                         {
-                            if (rentedgame.rentedStatus == "Rented" && rentedgame.rentedBy == id)
-                            {
-                                Console.WriteLine("Game ID: " + rentedgame.gamesID + "\nGame Name: " + rentedgame.gamesName);
-                            }
+                            Console.WriteLine("Game ID: " + rentedgame.gamesID + "\nGame Name: " + rentedgame.gamesName);
                         }
                         string selectGameReturn = Console.ReadLine();
-                        vm.Return(id, dateTime, selectGameReturn);
+                        if(vm.Return(selectGameReturn) !=null)
+                            Console.WriteLine("Return success!");
                     }
                     else if (inputStoreUser == 3)
                     {
-                        foreach (var rentedgame in vm.ListRentedGames(id))
+                        foreach (var rentedgame in vm.RentedGames(id))
                         {
-                            if (rentedgame.rentedBy == id)
-                            {
-                                Console.WriteLine("Game ID: " + rentedgame.gamesID + "\nGame Name: " + rentedgame.gamesName + " Return By: " + rentedgame.returnByDate);
-                            }
-                        }                      
+                            Console.WriteLine("Game ID: " + rentedgame.gamesID + "\nGame Name: " + rentedgame.gamesName + " Return By: " + rentedgame.returnByDate);
+                        }                  
                         Console.WriteLine("\n");
                     }
                     else if (inputStoreUser == 4)

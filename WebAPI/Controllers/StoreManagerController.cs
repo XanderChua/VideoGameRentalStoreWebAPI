@@ -82,6 +82,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GamesRented")]
+        public IHttpActionResult GetRentedGames(string Id)
+        {
+            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
+            foreach (Games games in videoGameRentalStoreContext.Games)
+            {
+                if (games.rentedStatus == "Rented" && games.rentedBy == Id)
+                    dtoList.Add(MapToGamesDTO(games));
+            }
+            return Ok(dtoList);
+        }
+
+        [HttpGet]
         [Route("OverduedGames")]
         public IHttpActionResult GetOverduedGames(Games storeGames, DateTime dateTime)
         {
