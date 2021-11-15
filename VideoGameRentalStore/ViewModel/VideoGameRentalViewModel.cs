@@ -178,6 +178,7 @@ namespace VideoGameRentalStore.ViewModel
                 throw new Exception(responseBody.Result);
             }
         }
+        //@todo Trainer: - implement it correctly
         public double TotalEarned()
         {
             Task<string> responseBody;

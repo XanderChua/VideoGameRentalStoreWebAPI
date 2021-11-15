@@ -63,9 +63,10 @@ namespace WebAPI.Controllers
             ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
-                dtoList.Add(MapToGamesDTO(games));
+                if(games.rentedStatus == "Not Rented")
+                    dtoList.Add(MapToGamesDTO(games));
             }
-            return Ok(dtoList.Where(x => x.rentedStatus == "Not Rented"));
+            return Ok(dtoList);
         }
 
         [HttpGet]
@@ -75,9 +76,10 @@ namespace WebAPI.Controllers
             ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
-                dtoList.Add(MapToGamesDTO(games));
+                if (games.rentedStatus == "Rented")
+                    dtoList.Add(MapToGamesDTO(games));
             }
-            return Ok(dtoList.Where(x => x.rentedStatus == "Rented"));
+            return Ok(dtoList);
         }
 
         [HttpGet]
@@ -87,7 +89,12 @@ namespace WebAPI.Controllers
             ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
             DateTime convertedReturnDate = DateTime.Parse(storeGames.returnByDate + " 12:00:00 AM");
             double daysLate = ((dateTime - convertedReturnDate).TotalDays);
-            return Ok(videoGameRentalStoreContext.Games.Where(x => x.returnByDate != "" && daysLate > 0));
+            foreach (Games games in videoGameRentalStoreContext.Games)
+            {
+                if (games.returnByDate!="" && daysLate>0 )
+                    dtoList.Add(MapToGamesDTO(games));
+            }
+            return Ok(dtoList);
         }
 
         [HttpGet]
