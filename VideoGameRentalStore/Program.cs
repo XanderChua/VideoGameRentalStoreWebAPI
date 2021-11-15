@@ -9,14 +9,11 @@ namespace VideoGameRentalStore
 {
     public class Program
     {
-        private readonly IConsoleIO ConsoleIO;
+        private static IConsoleIO ConsoleIO;
         private static IVideoGameRentalViewModel vm;
-        public Program(IConsoleIO consoleIO)
-        {
-            ConsoleIO = consoleIO;
-        }
         static void Main(string[] args)
         {
+            ConsoleIO = new ConsoleIO();
             vm = new VideoGameRentalViewModel();
             vm.Initialize();
             DateTime dt = DateTime.Now;
@@ -34,20 +31,19 @@ namespace VideoGameRentalStore
                     int input = Int32.Parse(Console.ReadLine());
                     if (input == 1)
                     {
-                        Console.WriteLine("Enter ID to login:");
-                        string inputID = Console.ReadLine();
-                        Console.WriteLine("Enter Password to login:");
-                        string password = Console.ReadLine();
+                        (string inputID, string password) =LoginUser();
                         if (inputID == "000" && password == "super")
                         {
                             PerformOperationsvm(dt);                          
                         }
-                        else if (vm.ValidateStaff(inputID, password) == true)
+                        else if (vm.ValidateStaff(inputID, password))
                         {
+                            Console.WriteLine("Staff login success!");
                             PerformOperationsStoreStaff(inputID);                           
                         }
-                        else if (vm.ValidateUser(inputID, password) == true)
+                        else if (vm.ValidateUser(inputID, password))
                         {
+                            Console.WriteLine("User login success!");
                             PerformOperationsUser(inputID, dt);
                         }
                         else
@@ -84,16 +80,16 @@ namespace VideoGameRentalStore
                 }
             }
         }
-        public void LoginUser()
+        private static (string,string) LoginUser()
         {
             ConsoleIO.WriteLine("Enter ID to login:");
             string inputID = ConsoleIO.ReadLine();
             ConsoleIO.WriteLine("Enter Password to login:");
             string password = ConsoleIO.ReadLine();
-            ConsoleIO.WriteLine("Login test success!");
+            return (inputID,password);
         }
 
-        public static void PerformOperationsvm(DateTime dateTime)
+        private static void PerformOperationsvm(DateTime dateTime)
         {
             bool loop = true;
             while (loop)
@@ -211,7 +207,7 @@ namespace VideoGameRentalStore
                 }
             }
         }
-        public static void PerformOperationsStoreStaff(string id)
+        private static void PerformOperationsStoreStaff(string id)
         {
             bool loop = true;
             ICollection<StoreStaffDTO> staffCollection = vm.ListStaff();
@@ -289,7 +285,7 @@ namespace VideoGameRentalStore
                 }
             }
         }
-        public static void PerformOperationsUser(string id, DateTime dateTime)
+        private static void PerformOperationsUser(string id, DateTime dateTime)
         {
             bool loop = true;
             ICollection<UserDTO> userCollection = vm.ListUser();

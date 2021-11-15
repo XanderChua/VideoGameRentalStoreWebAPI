@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data.Entity;
 using WebAPI.Models;
 
@@ -11,6 +8,7 @@ namespace WebAPI.EntityFramework
     {
         public VideoGameRentalStoreContext() : base()
         {
+            AppDomain.CurrentDomain.SetData("DataDirectory", "D:\\");
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<VideoGameRentalStoreContext>());
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

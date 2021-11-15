@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using WebAPI.Models;
-using Newtonsoft.Json;
-using System.IO;
-using WebAPI.EntityFramework;
-using VideoGameRental.Common.DTO;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Web.Http;
+using VideoGameRental.Common.DTO;
+using WebAPI.EntityFramework;
+using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {

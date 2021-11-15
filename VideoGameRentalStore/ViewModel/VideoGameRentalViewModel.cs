@@ -23,11 +23,10 @@ namespace VideoGameRentalStore.ViewModel
         public bool ValidateStaff(string inputID, string password)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/Login/VerifyStaff");
+            var response = _httpClient.GetAsync($"{baselink}/Login/VerifyStaff?id="+inputID+"&password="+password);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Staff login success!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return bool.Parse(responseBody.Result);
@@ -42,11 +41,10 @@ namespace VideoGameRentalStore.ViewModel
         public bool ValidateUser(string inputID, string password)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/Login/VerifyUser");
+            var response = _httpClient.GetAsync($"{baselink}/Login/VerifyUser?id=" + inputID + "&password=" + password);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("User login success!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return bool.Parse(responseBody.Result);
