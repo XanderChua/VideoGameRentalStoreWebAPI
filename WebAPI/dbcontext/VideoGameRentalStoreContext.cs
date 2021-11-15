@@ -6,14 +6,9 @@ namespace WebAPI.EntityFramework
 {
     public class VideoGameRentalStoreContext : DbContext
     {
-        public VideoGameRentalStoreContext() : base()
+        public VideoGameRentalStoreContext() : base("VideoGameRentalConnectionString")
         {
-            AppDomain.CurrentDomain.SetData("DataDirectory", "D:\\");
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<VideoGameRentalStoreContext>());
-        }
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
         }
         public DbSet<StoreStaff> StoreStaffs { get; set; }
         public DbSet<User> Users { get; set; }
