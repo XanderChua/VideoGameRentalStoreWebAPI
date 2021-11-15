@@ -244,7 +244,8 @@ namespace VideoGameRentalStore
                         string inputUserEmail = Console.ReadLine();
                         Console.WriteLine("Create User Email:");
                         string inputUserAddress = Console.ReadLine();
-                        vm.AddUser(inputUserID, inputUserPassword, inputUserName, inputUserPhone, inputUserAddress, inputUserEmail);
+                        if(vm.AddUser(inputUserID, inputUserPassword, inputUserName, inputUserPhone, inputUserAddress, inputUserEmail)!=null)
+                            Console.WriteLine("User added!");
                     }
                     else if (inputStoreStaffOption == 2)
                     {

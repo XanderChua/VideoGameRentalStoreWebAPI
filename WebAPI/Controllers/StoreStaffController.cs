@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Web.Http;
 using VideoGameRental.Common.DTO;
 using WebAPI.EntityFramework;
@@ -23,27 +22,23 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("AvailableGames")]
-        public IHttpActionResult GetAvailableGames()
-        {
-            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
-            foreach (Games games in videoGameRentalStoreContext.Games)
-            {
-                dtoList.Add(MapToGamesDTO(games));
-            }
-            return Ok(dtoList.Where(x => x.rentedStatus == "Not Rented"));
-        }
-
-        [HttpGet]
-        [Route("SearchUser")]
+        [Route("SearchUsers")]
         public IHttpActionResult SearchUserByGamesRented(string gameid)
         {
-            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
+            ICollection<UserDTO> dtoList = new Collection<UserDTO>();
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
-                dtoList.Add(MapToGamesDTO(games));
+                if (games.gamesID == gameid)
+                {
+                    foreach (User user in videoGameRentalStoreContext.Users)
+                    {
+                        if (user.userID == games.rentedBy)
+                            dtoList.Add(MapToUserDTO(user));
+                    }
+                    break;
+                }
             }
-            return Ok(dtoList.Where(x => x.gamesID == gameid));
+            return Ok(dtoList);
         }
 
         [HttpGet]
@@ -53,130 +48,23 @@ namespace WebAPI.Controllers
             ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
-                dtoList.Add(MapToGamesDTO(games));
+                if (games.rentedBy==userid)
+                    dtoList.Add(MapToGamesDTO(games));
             }
-            return Ok(dtoList.Where(x => x.rentedBy == userid));
+            return Ok(dtoList);
         }
-        //[HttpPatch]
-        //[Route("UpdatePassword")]
-        //public Dictionary<string, StoreStaff> UpdatePassword(string id, string password)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff = storeStaffs[id];
-        //    if (existingStaff == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        storeStaffs.Remove(id);
-        //        existingStaff.UpdateName(password);
-        //        storeStaffs.Add(id, existingStaff);
-        //        Update();
-        //    }
-        //    return storeStaffs;
-        //}
-
-        //[HttpPatch]
-        //[Route("UpdateName")]
-        //public Dictionary<string, StoreStaff> UpdateName(string id, string name)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff= storeStaffs[id];
-        //    if (existingStaff == null)
-        //    {
-        //        return null;
-        //    }               
-        //    else
-        //    {
-        //        storeStaffs.Remove(id);
-        //        existingStaff.UpdateName(name);
-        //        storeStaffs.Add(id, existingStaff);
-        //        Update();
-        //    }
-        //    return storeStaffs;
-        //}
-
-        //[HttpPatch]
-        //[Route("UpdatePhone")]
-        //public Dictionary<string, StoreStaff> UpdatePhone(string id, string phone)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff = storeStaffs[id];
-        //    if (existingStaff == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        storeStaffs.Remove(id);
-        //        existingStaff.UpdatePhone(phone);
-        //        storeStaffs.Add(id, existingStaff);
-        //        Update();
-        //    }
-        //    return storeStaffs;
-        //}
-
-        //[HttpPatch]
-        //[Route("UpdateAddress")]
-        //public Dictionary<string, StoreStaff> UpdateAddress(string id, string address)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff = storeStaffs[id];
-        //    if (existingStaff == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        storeStaffs.Remove(id);
-        //        existingStaff.UpdateAddress(address);
-        //        storeStaffs.Add(id, existingStaff);
-        //        Update();
-        //    }
-        //    return storeStaffs;
-        //}
-
-        //[HttpPatch]
-        //[Route("UpdateEmail")]
-        //public Dictionary<string, StoreStaff> UpdateEmail(string id, string email)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff = storeStaffs[id];
-        //    if (existingStaff == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        storeStaffs.Remove(id);
-        //        existingStaff.UpdateEmail(email);
-        //        storeStaffs.Add(id, existingStaff);
-        //        Update();
-        //    }
-        //    return storeStaffs;
-        //}
-
-        //[HttpDelete]
-        //[Route("DeleteStaff/{id}")]
-        //public Dictionary<string, StoreStaff> Delete(string id)
-        //{
-        //    Initialize();
-        //    StoreStaff existingStaff = storeStaffs[id];
-        //    if (existingStaff != null)
-        //    {
-        //        storeStaffs.Remove(id);
-        //        Update();
-        //    }          
-        //    return storeStaffs;
-        //}
+       
+        private User MapToUserModel(UserDTO storeUser)
+        {
+            return new User(storeUser.userID, storeUser.userPassword, storeUser.userName, storeUser.userPhone, storeUser.userAddress, storeUser.userEmail);
+        }
+        private UserDTO MapToUserDTO(User storeUser)
+        {
+            return new UserDTO(storeUser.userID, storeUser.userPassword, storeUser.userName, storeUser.userPhone, storeUser.userAddress, storeUser.userEmail);
+        }
         private GamesDTO MapToGamesDTO(Games storeGames)
         {
             return new GamesDTO(storeGames.gamesID, storeGames.gamesName, storeGames.gameRentPrice, storeGames.rentedStatus, storeGames.rentedBy, storeGames.rentedDate, storeGames.returnByDate);
-        }
-        private User MapToUserModel(UserDTO storeUserDto)
-        {
-            return new User(storeUserDto.userID, storeUserDto.userPassword, storeUserDto.userName, storeUserDto.userPhone, storeUserDto.userAddress, storeUserDto.userEmail);
         }
     }
 }

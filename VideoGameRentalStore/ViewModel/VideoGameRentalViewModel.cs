@@ -200,11 +200,12 @@ namespace VideoGameRentalStore.ViewModel
         public UserDTO AddUser(string inputUserID, string inputUserPassword, string inputUserName, string inputUserPhone, string inputUserAddress, string inputUserEmail)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/AddUser");
+            UserDTO dto = new UserDTO(inputUserID, inputUserPassword, inputUserName, inputUserPhone, inputUserAddress, inputUserEmail);
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+            var response = _httpClient.PostAsync($"{baselink}/StoreStaffManager/AddUser",queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("User added!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<UserDTO>(responseBody.Result);
@@ -219,7 +220,7 @@ namespace VideoGameRentalStore.ViewModel
         public ICollection<GamesDTO> SearchUser(string searchUserByGames)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchUser");
+            var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchUsers");
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
