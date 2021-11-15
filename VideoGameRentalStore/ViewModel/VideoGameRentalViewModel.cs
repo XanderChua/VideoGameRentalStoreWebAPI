@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Text;
 using System.Threading.Tasks;
 using VideoGameRental.Common.DTO;
 using VideoGameRentalStore.Interfaces;
@@ -60,11 +62,12 @@ namespace VideoGameRentalStore.ViewModel
         public StoreStaffDTO AddStaff(string inputStaffID, string inputStaffPassword, string inputStaffName, string inputStaffPhone, string inputStaffAddress, string inputStaffEmail)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreManager/AddStaff");
+            StoreStaffDTO dto = new StoreStaffDTO(inputStaffID, inputStaffPassword, inputStaffName, inputStaffPhone, inputStaffAddress, inputStaffEmail);
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+            var response = _httpClient.PostAsync($"{baselink}/StoreManager/AddStaff",queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Staff added!");
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<StoreStaffDTO>(responseBody.Result);
@@ -78,11 +81,13 @@ namespace VideoGameRentalStore.ViewModel
         public GamesDTO AddGames(string inputGamesID, string inputGamesName, string rentPrice)
         {
             Task<string> responseBody;
-            var response = _httpClient.GetAsync($"{baselink}/StoreManager/AddGames");
+            GamesDTO dto = new GamesDTO(inputGamesID, inputGamesName, rentPrice,"Not Rented", string.Empty, string.Empty,String.Empty);
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+            var response = _httpClient.PostAsync($"{baselink}/StoreManager/AddGames", queryString);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
-                Console.WriteLine("Games added!");
+                
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
                 return JsonConvert.DeserializeObject<GamesDTO>(responseBody.Result);

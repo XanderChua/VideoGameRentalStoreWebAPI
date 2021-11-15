@@ -1,29 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using WebAPI.Models;
-using Newtonsoft.Json;
-using System.IO;
-using WebAPI.EntityFramework;
-using VideoGameRental.Common.DTO;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Web.Http;
+using VideoGameRental.Common.DTO;
+using WebAPI.EntityFramework;
+using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
     [RoutePrefix("api/StoreManager")]
     public class StoreManagerController : ApiController
     {
-        private string readEarned;
-        public List<double> storeEarned = new List<double>();
-        private void Initialize()
-        {
-            readEarned = File.ReadAllText("StoreEarned.json");
-            storeEarned = JsonConvert.DeserializeObject<List<double>>(readEarned);
-        }
-
         VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
 
         [HttpPost]
@@ -106,8 +94,7 @@ namespace WebAPI.Controllers
         [Route("TotalEarned")]
         public IHttpActionResult GetTotalEarned()
         {
-            Initialize();
-            double earnedProfit = storeEarned.Sum();
+            double earnedProfit = 0;
             return Ok(earnedProfit);
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using VideoGameRental.Common.DTO;
 using VideoGameRentalStore.Interfaces;
 using VideoGameRentalStore.ViewModel;
@@ -121,7 +120,8 @@ namespace VideoGameRentalStore
                         string inputStaffAddress = Console.ReadLine();
                         Console.WriteLine("Create Staff Email:");
                         string inputStaffEmail = Console.ReadLine();
-                        vm.AddStaff(inputStaffID, inputStaffPassword, inputStaffName, inputStaffPhone, inputStaffAddress, inputStaffEmail);
+                        if(vm.AddStaff(inputStaffID, inputStaffPassword, inputStaffName, inputStaffPhone, inputStaffAddress, inputStaffEmail)!=null)
+                            Console.WriteLine("Staff added!");
                     }
                     else if (inputvmOption == 2)
                     {
@@ -131,7 +131,8 @@ namespace VideoGameRentalStore
                         string inputGamesName = Console.ReadLine();
                         Console.WriteLine("Enter Price:");
                         string rentPrice = Console.ReadLine();
-                        vm.AddGames(inputGamesID, inputGamesName, rentPrice);
+                        if (vm.AddGames(inputGamesID, inputGamesName, rentPrice)!=null)
+                            Console.WriteLine("Games added!");
                     }
                     else if (inputvmOption == 3)
                     {

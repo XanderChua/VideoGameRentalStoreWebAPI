@@ -14,7 +14,7 @@
             gamesID = id;
             gamesName = name;
             gameRentPrice = price;
-            rentedStatus = status;
+            rentedStatus = "Not Rented";
             rentedBy = rent;
             rentedDate = rd;
             returnByDate = rbd;
