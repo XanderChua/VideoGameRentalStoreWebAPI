@@ -58,8 +58,15 @@
       <Project>{7fc19b29-5976-4a0e-913d-3da86567f290}</Project>
       <Name>VideoGameRental.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj">
+      <Project>{B649822F-45B4-4792-8445-D2E8C7F4BAC8}</Project>
+      <Name>WebAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="EntityFramework">
+      <Version>6.4.4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client">
       <Version>5.2.7</Version>
     </PackageReference>

@@ -5,13 +5,34 @@ using System.Web.Http;
 using VideoGameRental.Common.DTO;
 using WebAPI.EntityFramework;
 using WebAPI.Models;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.IO;
+using WebAPI.Interface;
 
 namespace WebAPI.Controllers
 {
     [RoutePrefix("api/UserManager")]
     public class UserController : ApiController
     {
-        VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        IContext videoGameRentalStoreContext;
+        public UserController(IContext t)
+        {
+            videoGameRentalStoreContext = t;
+        }
+        public UserController()
+        {
+            videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        }
+
+        //VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+
+        public List<double> storeEarned = new List<double>();
+        private void Update()//run VS as administrator
+        {
+            string storeStaffJson = JsonConvert.SerializeObject(storeEarned);
+            File.WriteAllText("StoreEarned.json", storeStaffJson);
+        }
 
         [HttpPatch]
         [Route("Rent")]
@@ -41,20 +62,27 @@ namespace WebAPI.Controllers
             if (gamepatch != null)
             {
                 gamepatch.rentedStatus = "Not Rented";
-                gamepatch.rentedBy = null;
+                gamepatch.rentedBy = "";
                 DateTime convertedReturnDate = DateTime.ParseExact(gamepatch.returnByDate, "dd/MM/yyyy",CultureInfo.InvariantCulture);
                 double daysLate = ((DateTime.Now - convertedReturnDate).TotalDays);
                 if (daysLate > 0)
                 {
                     double gamePrice = Double.Parse(gamepatch.gameRentPrice);
                     double fine = daysLate * (gamePrice * 0.5);
+                    storeEarned.Add(fine + gamePrice);
+                    //Console.WriteLine("$" + (fine + gamePrice) + " paid.");
+                    //Console.WriteLine("You paid an extra $" + fine + " fine for returning " + daysLate + " days late.");
+                    Update();
                 }
                 else
                 {
                     double gamePrice = Double.Parse(gamepatch.gameRentPrice);
+                    storeEarned.Add(gamePrice);
+                    //Console.WriteLine("$" + (gamePrice) + " paid.");
+                    Update();
                 }
-                gamepatch.rentedDate = null;
-                gamepatch.returnByDate = null;
+                gamepatch.rentedDate = "";
+                gamepatch.returnByDate = "";
                 videoGameRentalStoreContext.SaveChanges();
             }
             else

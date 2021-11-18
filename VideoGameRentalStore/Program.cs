@@ -23,8 +23,8 @@ namespace VideoGameRentalStore
                 Console.WriteLine("--Game Rental Store--");
                 Console.WriteLine("Welcome! Please input an option.");
                 Console.WriteLine("1. Log In");
-                Console.WriteLine("2. Set Date");
-                Console.WriteLine("3. Exit");
+                //Console.WriteLine("2. Set Date");
+                Console.WriteLine("2. Exit");
                 try
                 {
                     int input = Int32.Parse(Console.ReadLine());
@@ -50,21 +50,21 @@ namespace VideoGameRentalStore
                             Console.WriteLine("User ID or password is incorrect");
                         }
                     }
+                    //else if (input == 2)
+                    //{
+                    //    Console.WriteLine("Enter date in dd/mm/yyyy format:");
+                    //    var date = Console.ReadLine();
+                    //    var isValidDate = DateTime.TryParse(date, out dt);
+                    //    if (isValidDate)
+                    //    {
+                    //        Console.WriteLine(dt.ToString("dd/MM/yyyy") + " has been set to today's date.");
+                    //    }
+                    //    else
+                    //    {
+                    //        Console.WriteLine(date + " is not a valid date string.");
+                    //    }
+                    //}
                     else if (input == 2)
-                    {
-                        Console.WriteLine("Enter date in dd/mm/yyyy format:");
-                        var date = Console.ReadLine();
-                        var isValidDate = DateTime.TryParse(date, out dt);
-                        if (isValidDate)
-                        {
-                            Console.WriteLine(dt.ToString("dd/MM/yyyy") + " has been set to today's date.");
-                        }
-                        else
-                        {
-                            Console.WriteLine(date + " is not a valid date string.");
-                        }
-                    }
-                    else if (input == 3)
                     {
                         loop = false;
                     }
@@ -79,7 +79,7 @@ namespace VideoGameRentalStore
                 }
             }
         }
-        private static (string,string) LoginUser()
+        public static (string,string) LoginUser()
         {
             ConsoleIO.WriteLine("Enter ID to login:");
             string inputID = ConsoleIO.ReadLine();
@@ -181,7 +181,7 @@ namespace VideoGameRentalStore
                     else if (inputvmOption == 7)
                     {
                         Console.WriteLine("Overdued Games:");
-                        foreach (var gamesDue in vm.OverduedGames(dateTime))
+                        foreach (var gamesDue in vm.OverduedGames())
                         {
                             Console.WriteLine("Game ID: " + gamesDue.gamesID + " Game Name: " + gamesDue.gamesName +
                                 "\nRented By: " + gamesDue.rentedBy + " Return By: " + gamesDue.returnByDate);                          
@@ -190,7 +190,7 @@ namespace VideoGameRentalStore
                     }
                     else if (inputvmOption == 8)
                     {
-                        Console.WriteLine(vm.TotalEarned());
+                        Console.WriteLine("Total Earned: $" + vm.TotalEarned());
                         Console.WriteLine("\n");
                     }
                     else if (inputvmOption == 9)
@@ -262,7 +262,8 @@ namespace VideoGameRentalStore
                         string searchUserByGames = Console.ReadLine();
                         foreach (var user in vm.SearchUser(searchUserByGames))
                         {
-                            Console.WriteLine("User ID: " + user.userID + "\nUser Name: " + user.userName);                           
+                            Console.WriteLine("User ID: " + user.rentedBy);
+                            //Console.WriteLine("User ID: " + user.userID + "\nUser Name: " + user.userName); //change dto to user
                         }                     
                     }
                     else if (inputStoreStaffOption == 4)
@@ -273,7 +274,8 @@ namespace VideoGameRentalStore
                         {
                             if (game.rentedStatus == "Not Rented")
                             {
-                                Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName);
+                                Console.WriteLine("Game ID: " + game.gamesID);
+                                //Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName);
                             }
                         }                    
                     }
@@ -321,7 +323,7 @@ namespace VideoGameRentalStore
                             Console.WriteLine("Game ID: " + game.gamesID + "\nGame Name: " + game.gamesName + " Price: " + game.gameRentPrice);
                         }
                         string selectGameRent = Console.ReadLine();
-                        if(vm.Rent(id, selectGameRent)!=null)
+                        if(vm.Rent(id, selectGameRent) != null)
                             Console.WriteLine("Rent success!");
                     }
                     else if (inputStoreUser == 2)
@@ -332,7 +334,7 @@ namespace VideoGameRentalStore
                             Console.WriteLine("Game ID: " + rentedgame.gamesID + "\nGame Name: " + rentedgame.gamesName);
                         }
                         string selectGameReturn = Console.ReadLine();
-                        if(vm.Return(selectGameReturn) !=null)
+                        if(vm.Return(selectGameReturn) != null)
                             Console.WriteLine("Return success!");
                     }
                     else if (inputStoreUser == 3)

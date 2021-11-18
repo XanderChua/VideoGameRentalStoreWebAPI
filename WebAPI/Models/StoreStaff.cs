@@ -30,25 +30,25 @@ namespace WebAPI.Models
             staffAddress = address;
             staffEmail = email;
         }
-        public void UpdatePassword(string password)
-        {
-            staffPassword = password;
-        }
-        public void UpdateName(string name)
-        {
-            staffName = name;
-        }
-        public void UpdatePhone(string phone)
-        {
-            staffPhone = phone;
-        }
-        public void UpdateAddress(string address)
-        {
-            staffAddress = address;
-        }
-        public void UpdateEmail(string email)
-        {
-            staffEmail = email;
-        }
+        //public void UpdatePassword(string password)
+        //{
+        //    staffPassword = password;
+        //}
+        //public void UpdateName(string name)
+        //{
+        //    staffName = name;
+        //}
+        //public void UpdatePhone(string phone)
+        //{
+        //    staffPhone = phone;
+        //}
+        //public void UpdateAddress(string address)
+        //{
+        //    staffAddress = address;
+        //}
+        //public void UpdateEmail(string email)
+        //{
+        //    staffEmail = email;
+        //}
     }
 }

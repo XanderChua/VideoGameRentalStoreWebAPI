@@ -176,9 +176,10 @@ namespace VideoGameRentalStore.ViewModel
                 throw new Exception(responseBody.Result);
             }
         }
-        public ICollection<GamesDTO> OverduedGames(DateTime dateTime)
+        public ICollection<GamesDTO> OverduedGames()
         {
             Task<string> responseBody;
+            
             var response = _httpClient.GetAsync($"{baselink}/StoreManager/OverduedGames");
             if (response.Result.IsSuccessStatusCode)
             {
@@ -231,7 +232,7 @@ namespace VideoGameRentalStore.ViewModel
             }
         }
         //GamesAvailable()
-        public ICollection<UserDTO> SearchUser(string searchUserByGames)
+        public ICollection<GamesDTO> SearchUser(string searchUserByGames)
         {
             Task<string> responseBody;
             var response = _httpClient.GetAsync($"{baselink}/StoreStaffManager/SearchUsers?gameid="+searchUserByGames);
@@ -240,7 +241,7 @@ namespace VideoGameRentalStore.ViewModel
             {
                 responseBody = response.Result.Content.ReadAsStringAsync();
                 responseBody.Wait();
-                return JsonConvert.DeserializeObject<ICollection<UserDTO>>(responseBody.Result);
+                return JsonConvert.DeserializeObject<ICollection<GamesDTO>>(responseBody.Result);
             }
             else
             {
@@ -271,7 +272,7 @@ namespace VideoGameRentalStore.ViewModel
         {
             Task<string> responseBody;
             var method = new HttpMethod("PATCH");
-            HttpRequestMessage request = new HttpRequestMessage(method, $"{baselink}/UserManager/Rent?gameID="+ selectGameRent + "&userid="+id);
+            HttpRequestMessage request = new HttpRequestMessage(method, $"{baselink}/UserManager/Rent?gameID=" + selectGameRent + "&userid=" + id);
             var response = _httpClient.SendAsync(request);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)

@@ -5,30 +5,53 @@ using System.Web.Http;
 using VideoGameRental.Common.DTO;
 using WebAPI.EntityFramework;
 using WebAPI.Models;
+using Newtonsoft.Json;
+using System.IO;
+using System.Linq;
+using System.Globalization;
+using WebAPI.Interface;
 
 namespace WebAPI.Controllers
 {
     [RoutePrefix("api/StoreManager")]
     public class StoreManagerController : ApiController
     {
-        VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        IContext videoGameRentalStoreContext;
+        public StoreManagerController(IContext t)
+        {
+            videoGameRentalStoreContext = t;
+        }
+        public StoreManagerController()
+        {
+            videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        }
 
+        //VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+
+        private string readEarned;
+        public List<double> storeEarned = new List<double>();
+
+        private void Initialize()
+        {
+            readEarned = File.ReadAllText("StoreEarned.json");
+            storeEarned = JsonConvert.DeserializeObject<List<double>>(readEarned);
+        }
         [HttpPost]
         [Route("AddStaff")]
-        public StoreStaffDTO AddStaff(StoreStaffDTO storeStaff)
+        public IHttpActionResult AddStaff(StoreStaffDTO storeStaff)
         {
             videoGameRentalStoreContext.StoreStaffs.Add(MapToStaffModel(storeStaff));
             videoGameRentalStoreContext.SaveChanges();
-            return storeStaff;
+            return Ok(storeStaff);
         }
 
         [HttpPost]
         [Route("AddGames")]
-        public GamesDTO AddGames(GamesDTO storeGames)
+        public IHttpActionResult AddGames(GamesDTO storeGames)
         {
             videoGameRentalStoreContext.Games.Add(MapToGamesModel(storeGames));
             videoGameRentalStoreContext.SaveChanges();
-            return storeGames;
+            return Ok(storeGames);
         }
 
         [HttpGet]
@@ -96,15 +119,17 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("OverduedGames")]
-        public IHttpActionResult GetOverduedGames(Games storeGames, DateTime dateTime)
+        public IHttpActionResult GetOverduedGames()
         {
-            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
-            DateTime convertedReturnDate = DateTime.Parse(storeGames.returnByDate + " 12:00:00 AM");
-            double daysLate = ((dateTime - convertedReturnDate).TotalDays);
+            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();           
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
-                if (games.returnByDate!="" && daysLate>0 )
+                DateTime convertedReturnDate = DateTime.Parse(games.returnByDate + " 12:00:00 AM");
+                double daysLate = ((DateTime.Now - convertedReturnDate).TotalDays);
+                if (games.returnByDate != "" && daysLate > 0)
+                {
                     dtoList.Add(MapToGamesDTO(games));
+                }                   
             }
             return Ok(dtoList);
         }
@@ -113,7 +138,8 @@ namespace WebAPI.Controllers
         [Route("TotalEarned")]
         public IHttpActionResult GetTotalEarned()
         {
-            double earnedProfit = 0;
+            Initialize();
+            double earnedProfit = storeEarned.Sum();
             return Ok(earnedProfit);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Web.Http;
 using VideoGameRental.Common.DTO;
 using WebAPI.EntityFramework;
+using WebAPI.Interface;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -10,7 +11,17 @@ namespace WebAPI.Controllers
     [RoutePrefix("api/StoreStaffManager")]
     public class StoreStaffController : ApiController
     {
-        VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        IContext videoGameRentalStoreContext;
+        public StoreStaffController(IContext t)
+        {
+            videoGameRentalStoreContext = t;
+        }
+        public StoreStaffController()
+        {
+            videoGameRentalStoreContext = new VideoGameRentalStoreContext();
+        }
+
+        //VideoGameRentalStoreContext videoGameRentalStoreContext = new VideoGameRentalStoreContext();
 
         [HttpPost]
         [Route("AddUser")]
@@ -25,18 +36,13 @@ namespace WebAPI.Controllers
         [Route("SearchUsers")]
         public IHttpActionResult SearchUserByGamesRented(string gameid)
         {
-            ICollection<UserDTO> dtoList = new Collection<UserDTO>();
+            ICollection<GamesDTO> dtoList = new Collection<GamesDTO>();
             foreach (Games games in videoGameRentalStoreContext.Games)
             {
                 if (games.gamesID == gameid)
                 {
-                    foreach (User user in videoGameRentalStoreContext.Users)
-                    {
-                        if (user.userID == games.rentedBy)
-                            dtoList.Add(MapToUserDTO(user));
-                    }
-                    break;
-                }
+                    dtoList.Add(MapToGamesDTO(games));
+                }                
             }
             return Ok(dtoList);
         }

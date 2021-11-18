@@ -20,12 +20,12 @@ namespace VideoGameRentalStore.Interfaces
         ICollection<GamesDTO> GamesAvailable();
         ICollection<GamesDTO> RentedGames();
         ICollection<GamesDTO> RentedGames(string id);
-        ICollection<GamesDTO> OverduedGames(DateTime dateTime);
+        ICollection<GamesDTO> OverduedGames();
         double TotalEarned();
 
         //Store Staff
         UserDTO AddUser(string inputUserID, string inputUserPassword, string inputUserName, string inputUserPhone, string inputUserAddress, string inputUserEmail);
-        ICollection<UserDTO> SearchUser(string searchUserByGames);
+        ICollection<GamesDTO> SearchUser(string searchUserByGames);
         ICollection<GamesDTO> SearchGame(string searchGamesByUser);
 
         //User
